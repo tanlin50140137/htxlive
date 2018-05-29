@@ -1,0 +1,8 @@
+@CHARSET "UTF-8";
+*{margin:0;padding:0;}
+img{border:none;border:0;}
+ul,ol{list-style-type:none;}
+
+.bg{background:#313131;}
+.live_box{width:70%;float:left;}
+.mote_box{margin-left:2px;float:left;width:29.5%;}
