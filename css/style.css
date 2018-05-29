@@ -5,4 +5,7 @@ ul,ol{list-style-type:none;}
 
 .bg{background:#313131;}
 .live_box{width:70%;float:left;}
-.mote_box{margin-left:2px;float:left;width:29.5%;}
+.mote_box{margin-left:2px;float:left;width:29.5%;height:50px;line-height:50px;}
+.mote_box_h1{color:#c3a1a1;padding-left:10px;}
+.liaotian{border:1px solid red;margin-left:2px;height:570px;}
+.senddata{border:1px solid red;margin-left:2px;height:250px;}
