@@ -23,8 +23,8 @@ function ckplayerConfig() {
 			definition: true, //是否使用清晰度组件
 			smartRemove: true, //是否使用智能清理，使用该功能则在多段时当前播放段之前的段都会被清除出内存，减少对内存的使用
 			bufferTime: 200, //缓存区的长度，单位：毫秒,不要小于10
-			click: true, //是否支持屏幕单击暂停
-			doubleClick: true, //是否支持屏幕双击全屏
+			click: false, //是否支持屏幕单击暂停
+			doubleClick: false, //是否支持屏幕双击全屏
 			doubleClickInterval: 200, //判断双击的标准，即二次单击间隔的时间差之内判断为是双击，单位：毫秒
 			keyDown: {
 				space: true, //是否启用空格键切换播放/暂停

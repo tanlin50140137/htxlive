@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>打开服务器－开始工作</title>
+<script src="../js/jquery-1.11.2.min.js"></script>
+</head>
+<body>
+<div style="background:#373837;margin:50px auto;width:500px;height:250px;line-height:250px;text-align:center;">
+	<input type="button" value="打开服务器 (open service)" id="openservice" style="height: 60px;background:#9c8d77;padding:0 10px;font-size:16px;color:#fbf7f7;"/><font style="color:#e6bebe;">[状态：<span>关闭</span>]</font>
+</div>
+<script>
+$(function(){
+	$("#openservice").click(function(){
+		$.post("start.php",{"act":"SetOpen"},function(data){
+			alert(data);
+		});
+	});
+});
+</script>
+</body>
+</html>
