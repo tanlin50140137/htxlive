@@ -6,7 +6,7 @@ $server->on('open', function($server, $req) {
 });
 
 $server->on('message', function($server, $frame) {
-	
+
     echo "received message: {$frame->data}\n";
     $as = explode('&',$frame->data);
     
@@ -14,6 +14,9 @@ $server->on('message', function($server, $frame) {
     $redis = new Redis();
     $redis->connect('127.0.0.1', 6379);  
     $redis->expire('message-list',300);//过期时间  
+    
+    $redis->set($frame->fd,$as[1]);//链接人数
+    
 	if($as[0]=='send')
     {#发
     	$redis->lpush("message-list", $frame->data.'&'.$frame->fd);
@@ -23,14 +26,25 @@ $server->on('message', function($server, $frame) {
     {#查  
     	$arList = $redis->lrange("message-list",0,500);
     }
+    
+	//用户链接数
+	$userArr = $redis->keys("*");
+	$userc = array();
+	foreach($userArr as $v){
+		if( $v != 'message-list' )
+		{
+			$userc[]=$redis->get($v);
+		}
+	}
+    
 	if(!empty($arList))
-	{
+	{			
 		$arList2 = array_reverse($arList);
-		$data_frame = json_encode(array('error'=>0,'txt'=>$arList2,'num'=>count($arList2)));
+		$data_frame = json_encode(array('error'=>0,'txt'=>$arList2,'num'=>count($arList2),'connections'=>$userc));
 	}
 	else
 	{
-		$data_frame = json_encode(array('error'=>1,'txt'=>null));
+		$data_frame = json_encode(array('error'=>1,'txt'=>null,'connections'=>$userc));
 	}
 	
 	$server->push($frame->fd, $data_frame);
@@ -38,6 +52,9 @@ $server->on('message', function($server, $frame) {
 
 $server->on('close', function($server, $fd) {
     echo "connection close: {$fd}\n";
+    $redis = new Redis();
+    $redis->connect('127.0.0.1', 6379);
+    $redis->delete($fd);
 });
 
 $server->start();

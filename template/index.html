@@ -9,7 +9,7 @@
 <body class="bg">
 <div class="live_box" id="video_main_url"></div>
 <div class="mote_box">
-	<h1 class="mote_box_h1">火天信简易直播间</h1>
+	<h1 class="mote_box_h1">火天信简易直播间<font id="renshu"></font> </h1>
 	<div class="liaotian">		
 			<div class="liaoqu1">
 				<div class="liaotian_append">
@@ -19,27 +19,25 @@
 					</div>
 				</div>
 			</div>
-			<div class="liaoqu2">
-				<div class="liaoqu2_in">路人甲  &nbsp; 进入房间</div>
-				<div class="liaoqu2_in">路人乙  &nbsp; 进入房间</div>
-			</div>			
+			<div class="liaoqu2"></div>			
 	</div>
 	<div class="senddata">
-		<textarea name="body" id="textarea-d"></textarea>
-		<input type="hidden" id="name" value="路人<?php echo $luren_name;?>"/>
+		<textarea name="body" id="textarea-d" maxlength="300"></textarea>
+		<input type="hidden" id="name" value="<?php echo $luren_name;?>"/>
 		<input type="hidden" id="days" value="<?php echo date('Y-m-d H:i:s');?>"/>
-		<p><input type="button" value="你是路人<?php echo $luren_name;?>@ 发言" style="height:50px;" onclick="SendDatas()"/></p>
+		<p><input type="button" value="你是<?php echo $luren_name;?>@ 发言" style="height:50px;" onclick="SendDatas()"/></p>
 	</div>
 </div>
 
 <script src="ckplayer/ckplayer.js" charset="UTF-8"></script>
 <script src="js/live.js"></script>
 <script>
+	var num=0,pxe=3000;
 	var ws = new WebSocket("ws://120.76.72.28:9502");
 	
 	ws.onopen = function(evt) { 
-		console.log("路人<?php echo $luren_name;?>");	
-		setTimeout(SendDatasWenWen,3000);
+		console.log("<?php echo $luren_name;?>");	
+		//setTimeout(SendDatasWenWen,pxe);
 	};
 	
 	function SendDatas(){ 
@@ -54,43 +52,60 @@
 	
 	var scrollHeight = $(".liaotian_append").height();
 	$(".liaoqu1").scrollTop(scrollHeight);
-	var num = 0;
 	
 	ws.onmessage = function(evt) {
-			var obj =eval("("+evt.data+")");		
+			//console.log(evt.data);return false;
+			var obj =eval("("+evt.data+")");	
+			var clen = obj.connections.length;
 			if( obj.error == 0 ){
-				var len = obj.txt.length;
+				var len = obj.txt.length;				
 				if( num==0 || num != len ){
 					var html = '';
 					$(".liaotian_append").empty();
 					for(var i=0;i<len;i++){
 						var s = obj.txt[i].split('&');
 						html += '<div class="liaoqu1_in">';
-						html += '<p style="height:25px;line-height:25px;"><font style="color:#a0d48f;">'+s[4]+'.'+s[1]+'  &nbsp; '+s[2]+'</font></p>';
+						html += '<p style="height:25px;line-height:25px;"><font style="color:#a0d48f;">'+s[1]+'  &nbsp; '+s[2]+'</font></p>';
 						html += '<p style="color:#dccfcf;font-size: 15px;">'+s[3]+'</p>';
 						html += '</div>';
-					}
-							
-					$(".liaotian_append").append(html);	
-					
+					}							
+					$(".liaotian_append").append(html);													
 					var scrollHeight = $(".liaotian_append").height();
 					$(".liaoqu1").scrollTop(scrollHeight);
+					
+					pxe=3000;
 				}
+				else
+				{
+					pxe=10000;
+				}
+							
 				num = obj.num;
 			}
+			
+			$("#textarea-d").val('');
+			
+			var ch = '';
+			$(".liaoqu2").empty();
+			for(var c=0;c<clen;c++){
+				ch += '<div class="liaoqu2_in">'+obj.connections[c]+'  &nbsp; 进入房间</div>';
+			}
+			$(".liaoqu2").append(ch);				
+			$("#renshu").html('（人数'+clen+'）');//人数
 	};
 
 	function SendDatasWenWen(){ 
-		ws.send('onsend&kankan');
-		setTimeout(SendDatasWenWen,3000);
+		var u = $("#name").val();
+		ws.send('onsend&'+u);
+		//console.log(pxe);
+		setTimeout(SendDatasWenWen,pxe);		
 	}
 	
 	ws.onclose = function(evt) {
 	  //console.log("Connection closed.");
 	  ws.close();
 	}; 
-	//http://120.76.72.28/service/client.php
-	
+	//http://120.76.72.28/service/client.php	
 </script>
 </body>
 </html>
